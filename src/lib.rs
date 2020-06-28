@@ -19,8 +19,8 @@
 //! ```
 //!
 //! Various functions can be memoized.
-//! Because the arguments are saved into keys of `std::collections::HashMap` internally,
-//! this macro can be applied to functions all of whose arguments implments `Hash` and `Eq`.
+//! More Precisely, this macro can be applied to functions all of whose arguments implement `Eq + Hash`
+//! because the arguments are saved as the keys of `std::collections::HashMap` internally,
 //!
 //! ```
 //! use memor::memo;

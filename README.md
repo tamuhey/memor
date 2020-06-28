@@ -19,8 +19,9 @@ assert_eq!(12586269025, fib(50));
 ```
 
 Various functions can be memoized.
-Because the arguments are saved as the keys of `std::collections::HashMap` internally,
-this macro can be applied to functions all of whose arguments implements `Eq + Hash`.
+More Precisely, this macro can be applied to functions all of whose arguments implement `Eq + Hash`
+because the arguments are saved as the keys of `std::collections::HashMap` internally,
+
 
 ```rust
 use memor::memo;
