@@ -3,6 +3,12 @@ name = "memor"
 version = "0.1.0"
 authors = ["Yohei Tamura <tamuhey@gmail.com>"]
 edition = "2018"
+readme = "README.md"
+homepage = "https://github.com/tamuhey/memor"
+repository = "https://github.com/tamuhey/memor"
+documentation = "https://docs.rs/memor"
+license = "MIT"
+description = "Simple memoization macro for rust"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
