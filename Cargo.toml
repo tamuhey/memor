@@ -16,8 +16,5 @@ description = "Simple memoization macro for rust"
 syn = { version = "1.0", features = ["full", "extra-traits"] }
 quote = "1.0"
 
-[dev-dependencies]
-trybuild = "1.0"
-
 [lib]
 proc-macro = true
