@@ -4,7 +4,7 @@
 
 Just add `#[memo]` to your function.
 
-```
+```rust
 use memor::memo;
 #[memo]
 fn fib(n: i64) -> i64 {
@@ -22,7 +22,7 @@ Various functions can be memoized.
 Because the arguments are saved as the keys of `std::collections::HashMap` internally,
 this macro can be applied to functions all of whose arguments implements `Eq + Hash`.
 
-```
+```rust
 use memor::memo;
 #[derive(Hash, Eq, PartialEq)]
 struct Foo {
