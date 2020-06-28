@@ -50,6 +50,7 @@ use syn::{parse_macro_input, parse_quote, Expr, FnArg, ItemFn, ReturnType, Type}
 #[proc_macro_attribute]
 pub fn memo(_: TokenStream, input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as ItemFn);
+
     let mut key_types = Vec::<Type>::new();
     let mut keys = Vec::<Expr>::new();
     input.sig.inputs.iter().for_each(|x| match x {
@@ -58,7 +59,7 @@ pub fn memo(_: TokenStream, input: TokenStream) -> TokenStream {
             let p = &pat.pat;
             keys.push(parse_quote!(#p));
         }
-        _ => unimplemented!(),
+        _ => unimplemented!("Unimplemented function signature: {:?}", x),
     });
 
     let key_type: Type = parse_quote! {(#(#key_types),*)};
@@ -66,27 +67,26 @@ pub fn memo(_: TokenStream, input: TokenStream) -> TokenStream {
         ReturnType::Type(_, ty) => (**ty).clone(),
         _ => panic!("required: return type"),
     };
-    let memo_type: Type = parse_quote!(std::collections::HashMap<#key_type, #ret_type>);
-    let memo_name = format_ident!("{}_MEMO", format!("{}", input.sig.ident).to_uppercase());
-
+    let memo_name = format_ident!("{}_MEMO", input.sig.ident.to_string().to_uppercase());
     let fn_sig = input.sig;
     let fn_block = input.block;
 
     let expanded = quote! {
             thread_local!(
-                static #memo_name: std::cell::RefCell<#memo_type> =
+                static #memo_name: std::cell::RefCell<std::collections::HashMap<#key_type, #ret_type>> =
                     std::cell::RefCell::new(std::collections::HashMap::new())
             );
 
             #fn_sig {
                 if let Some(ret) = #memo_name.with(|memo| memo.borrow().get(&(#(#keys),*)).cloned()) {
-                    return ret.clone();
+                    ret
+                } else {
+                    let ret: #ret_type = (||#fn_block)();
+                    #memo_name.with(|memo| {
+                        memo.borrow_mut().insert((#(#keys),*), ret.clone());
+                    });
+                    ret
                 }
-                let ret: #ret_type = (||#fn_block)();
-                #memo_name.with(|memo| {
-                    memo.borrow_mut().insert((#(#keys),*), ret.clone());
-                });
-                ret
             }
     };
 
